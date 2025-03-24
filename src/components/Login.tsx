@@ -1,31 +1,38 @@
-import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import { loginUser } from "../services/loginService";
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { loginUser } from '../services/loginService';
 
-const Login = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
+function Login() {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
     const { setIsAuthenticated } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
+        setError('');
         try {
             const data = await loginUser(email, password);
-            localStorage.setItem("token", data.token);
+            localStorage.setItem('token', data.token);
             setIsAuthenticated(true);
-            navigate("/");
+            navigate('/');
         } catch (err) {
-            setError("Invalid email or password");
+            setError('Invalid email or password');
         }
     };
 
-    const handleGoogleLogin = () => {
-        console.log("Google login clicked");
+    const handleForgotPassword = () => {
+        navigate('/forgot-password');
+    };
 
+    const handleSignUp = () => {
+        navigate('/create-user');
+    };
+
+    const handleGoogleLogin = () => {
+        console.log('Google login clicked');
     };
 
     return (
@@ -65,11 +72,20 @@ const Login = () => {
                 Login
             </button>
 
+            <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="w-full text-blue-500 py-2 my-2 rounded-sm font-semibold hover:underline transition duration-300"
+            >
+                Forgot password?
+            </button>
+
             <div className="flex items-center my-6">
                 <div className="flex-grow h-px bg-gray-300"></div>
                 <span className="px-3 text-gray-500 text-sm">OR</span>
                 <div className="flex-grow h-px bg-gray-300"></div>
             </div>
+
             <button
                 type="button"
                 onClick={handleGoogleLogin}
@@ -82,14 +98,26 @@ const Login = () => {
                 />
                 Login with Google
             </button>
+
             <button
                 type="button"
                 className="mt-3 w-full flex items-center justify-center gap-2 border border-gray-400 text-gray-800 py-2 rounded-sm font-semibold hover:bg-gray-100 transition duration-300"
             >
                 🔑 Other Login Methods
             </button>
+
+            <div className="mt-6 text-center">
+                <p className="text-gray-600 text-sm">Don't have an account?</p>
+                <button
+                    type="button"
+                    onClick={handleSignUp}
+                    className="text-blue-500 font-semibold hover:underline transition duration-300"
+                >
+                    Sign up
+                </button>
+            </div>
         </form>
     );
-};
+}
 
 export default Login;
